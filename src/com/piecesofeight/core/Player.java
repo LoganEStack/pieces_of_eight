@@ -5,21 +5,21 @@ import com.piecesofeight.parser.Parser;
 import java.util.ArrayList;
 
 public class Player {
-    String location;
-    int health = 150;
-    int noise = 0;
-    ArrayList<String> inventory = new ArrayList<String>();
+    private String location;
+    private int health = 150;
+    private int noise = 0;
+    private ArrayList<String> inventory = new ArrayList<String>();
     //Parser parser = new Parser();
 
-    private void setLocation(String location) { this.location = location; }
+    public void setLocation(String location) { this.location = location; }
 
-    String getLocation() { return location; }
+    public String getLocation() { return location; }
 
-    private void addToInventory(String item) {
+    public void addToInventory(String item) {
         inventory.add(item);
     }
 
-    private void getInventory() {
+    public void getInventory() {
         System.out.println(inventory);
     }
 

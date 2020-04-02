@@ -48,6 +48,11 @@ public class Dictionary {
 
         entities.put( "ghost pirate", new ArrayList<String>(Arrays.asList()) );
 
+        other.put( "the", new ArrayList<String>(Arrays.asList()) );
+        other.put( "at", new ArrayList<String>(Arrays.asList()) );
+        other.put( "to", new ArrayList<String>(Arrays.asList()) );
+        other.put( "a", new ArrayList<String>(Arrays.asList()) );
+        other.put( "an", new ArrayList<String>(Arrays.asList()) );
     }
 
     public Boolean isVerb(String word) {

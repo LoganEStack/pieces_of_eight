@@ -1,92 +1,75 @@
 package com.piecesofeight.parser;
 
-import java.util.Stack;
+import com.piecesofeight.core.Player;
 
 public class Parser {
 
     Lexer lexer;
     Token token;
-    Stack<String> stack = new Stack<String>();
+    Actions actions;
+    Player player;
 
-    public Parser(String input){
+    public Parser(String input) {
         lexer = new Lexer(input + "$");
         token = lexer.nextToken();
+        player = new Player();
+        player.setLocation("unset");
+        actions = new Actions(player);
     }
 
-    //runs the parser
+    // runs the parser
     public void run() {
-        String indentation = "";
-        //while the token is not an EOI
-        while (token.getTokenType() != Token.TokenType.EOI &&
-                token.getTokenType() != Token.TokenType.INVALID) {
+        String verb = "";
+        String adjective = "";
+        String noun = "";
 
-            //if the token is 1 character, it's a STRING
-            if (token.getTokenValue().length() == 1) {
-                System.out.println(indentation + token.getTokenValue());
-                token = lexer.nextToken();
+        // while the token is not an EOI
+        while (token.getTokenType() != Token.TokenType.EOI && token.getTokenType() != Token.TokenType.INVALID) {
+            // If the token is a verb, scan ahead for the first noun to apply that verb to
+            if (token.getTokenType() == Token.TokenType.VERB) {
+                verb = token.getTokenValue();
+            } else if (token.getTokenType() == Token.TokenType.ADJECTIVE) {
+                adjective = token.getTokenValue();
+            } else if (token.getTokenType() == Token.TokenType.LOCATION) {
+                noun = token.getTokenValue();
+            } else if (token.getTokenType() == Token.TokenType.OBJECT) {
+                noun = token.getTokenValue();
+            } else if (token.getTokenType() == Token.TokenType.ENTITY) {
+                noun = token.getTokenValue();
             }
-            //if the token is not a closing tag
-            else if (token.getTokenValue().charAt(1) != '/') {
-                //if the token is a string
-                /*if(token.getTokenType() == Token.TokenType.STRING) {
-                    System.out.println(indentation + token.getTokenValue());
-                    token = lexer.nextToken();
-                }
-                //if the token is a keyword
-                else if(token.getTokenType() == Token.TokenType.KEYWORD) {
-                    System.out.println(indentation + token.getTokenValue());
-                    indentation += "  ";
-                    //push the value onto a stack
-                    stack.push(token.getTokenValue());
-                    token = lexer.nextToken();
-                }
-                //if the token is neither a string nor keyword
-                else {
-                    error();
-                }*/
-            }
-            //if the token is a closing tag
-            else {
-                //check the stack to ensure correctness
-                match();
-                //remove two indentation spaces while preventing bounds error
-                if(!indentation.equals(""))
-                    indentation = indentation.substring(0,indentation.length() - 2);
-                System.out.println(indentation + token.getTokenValue());
-                token = lexer.nextToken();
-            }
+
+            token = lexer.nextToken();
         }
-        //if the token is invalid or the stack still has tags remaining, error
         if (token.getTokenType() == Token.TokenType.INVALID) {
             error();
         }
-        if (!stack.empty()) {
-            error();
-        }
-    }
+        // If a verb and noun exist
+        if (verb != "" && noun != "") {
+            if (verb.equals("move")) { actions.move(noun, adjective); }
+            else if (verb.equals("look")) { actions.look(noun, adjective); }
+            else if (verb.equals("run")) { actions.run(noun, adjective); }
+            else if (verb.equals("listen")) { actions.listen(noun, adjective); }
+            else if (verb.equals("speak")) { actions.speak(noun, adjective); }
+            else if (verb.equals("climb")) { actions.climb(noun, adjective); }
+            else if (verb.equals("sneak")) { actions.sneak(noun, adjective); }
+            else if (verb.equals("take")) { actions.take(noun, adjective); }
+            else if (verb.equals("throw")) { actions.throw_(noun, adjective); }
+            else if (verb.equals("attack")) { actions.attack(noun, adjective); }
 
-    //match performs most of the syntax management
-    private void match() {
-        String temp = stack.pop();
+        }
+        else if (verb != "") {
+            if (verb.equals("look")) { actions.look(); }
+            else if (verb.equals("listen")) { actions.listen(); }
+            else if (verb.equals("speak")) { actions.speak(); }
+            else if (verb.equals("inventory")) { actions.inventory(); }
+            else if (verb.equals("quit")) { actions.quit(); }
+            else if (verb.equals("help")) { actions.help(); }
 
-        //ensures that last stack item (first item pushed) is body tag
-        if (stack.empty() && !(temp.equals("<body>")) ) {
-            error();
         }
-        //li must be surrounded by ul
-        if (temp.equals("<li>") && !(stack.peek().equals("<ul>")) ) {
-            error();
-        }
-        //and vice versa
-        if (!stack.empty() && !(temp.equals("<li>")) && (stack.peek().equals("<ul>")) ) {
-            error();
+        else {
+            System.out.println("Command not understood.");
         }
 
-        temp = "</" + temp.substring(1);
-
-        if (!temp.equals(token.getTokenValue())) {
-            error();
-        }
     }
 
     private void error() {
