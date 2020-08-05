@@ -1,53 +1,44 @@
 package com.piecesofeight.core;
 
+import com.piecesofeight.objects.GameObject;
+import com.piecesofeight.objects.GameObjectHandler;
+
+import java.util.ArrayList;
+
 public class Location {
     private String name;
     private String description;
-    private String itemList;
+    private ArrayList<String> itemList = new ArrayList<String>();
 
-    public Location(String enteredName, String enteredDescription) {
-        name = enteredName;
-        description = enteredDescription;
+    public Location(String name, String description, ArrayList<String> itemList) {
+        this.name = name;
+        this.description = description;
+        this.itemList = itemList;
+        // Instantiates all objects upon location creation, could change to only create when a new room is entered
+        for (String item : itemList)  {
+            //gameObjectHandler.initializeGameObject(item);
+        }
     }
 
-    void setName(String name) { this.name = name; }
+    private void refresh() {
+        //ensure that objectItemList is the same as itemList
+    }
 
-    String getName() { return "You have entered the " + name + "."; }
+    public String getName() { return "You have entered the " + name + "."; }
 
-    void setDescription(String description) { this.description = description; }
+    public void setDescription(String description) { this.description = description; }
 
-    String getDescription() { return description; }
+    public String getDescription() { return description; }
 
-    void setItemList(String itemList) { this.itemList = itemList; }
+    public String getItemList() { return "In the room, you see " + itemList + "."; }
 
-    String getItemList() { return "In the room, you see " + itemList + "."; }
+    public void addToItemList(String item) {
+        itemList.add(item);
+        refresh();
+    }
 
-    void printMap() {
-        System.out.println("_________________");
-        System.out.println("|       |       |");
-        switch (name) {
-            case "Main Deck":
-                System.out.println("|   x   |       |");
-                break;
-            case "Gun Deck":
-                System.out.println("|       |   x   |");
-                break;
-            default:
-                System.out.println("|       |       |");
-        }
-        System.out.println("|_______|_______|");
-        System.out.println("|       |       |");
-        switch (name) {
-            case "Cargo Hold":
-                System.out.println("|   x   |       |");
-                break;
-            case "Gallery":
-                System.out.println("|       |   x   |");
-                break;
-            default:
-                System.out.println("|       |       |");
-        }
-        System.out.println("|       |       |");
-        System.out.println("=================");
+    public void removeFromItemList(String item) {
+        itemList.remove(item);
+        refresh();
     }
 }

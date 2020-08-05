@@ -4,73 +4,49 @@ import com.piecesofeight.parser.Parser;
 
 import java.util.ArrayList;
 
+//Singleton class
 public class Player {
-    private String location;
-    private int health = 150;
-    private int noise = 0;
+    private static Player player_instance = null;
+
+    private String currentLocation;
+    private int health;
+    private int noiseLevel;
     private ArrayList<String> inventory = new ArrayList<String>();
     //Parser parser = new Parser();
 
-    public void setLocation(String location) { this.location = location; }
+    // private constructor restricted to this class itself
+    private Player()
+    {
+        currentLocation = "unset";
+        health = 100;
+        noiseLevel = 0;
+    }
 
-    public String getLocation() { return location; }
+    // static method to create instance of Singleton class
+    public static Player getInstance()
+    {
+        if (player_instance == null)
+            player_instance = new Player();
+
+        return player_instance;
+    }
+
+    public void setLocation(String location) { this.currentLocation = location; }
+
+    public String getLocation() { return currentLocation; }
 
     public void addToInventory(String item) {
         inventory.add(item);
     }
+
+    public void removeFromInventory(String item) { inventory.remove(item); }
 
     public void getInventory() {
         System.out.println(inventory);
     }
 
     int handleAction(String command) {
-        //String[] parsedCommand = parser.parseAction(command);
-            String[] parsedCommand = {};
-        switch (parsedCommand[0]) {
-            case "move":
-                System.out.println(parsedCommand[1]);
-                setLocation(parsedCommand[1]);
-                break;
-            case "look":
-                System.out.println(getLocation());
-                return 1;
-            case "run":
-                break;
-            case "listen":
-                break;
-            case "speak":
-                break;
-            case "climb":
-                break;
-            case "sneak":
-                break;
-            case "take":
-                addToInventory("Rock");
-                break;
-            case "inventory":
-                getInventory();
-                break;
-            case "throw":
-                break;
-            case "attack":
-                break;
-            case "quit":
-                break;
-            case "help":
-                System.out.println("List of available actions:");
-                System.out.printf("%-15.15s  %-15.15s%n", "move", "look");
-                System.out.printf("%-15.15s  %-15.15s%n", "run", "climb");
-                System.out.printf("%-15.15s  %-15.15s%n", "listen", "speak");
-                System.out.printf("%-15.15s  %-15.15s%n", "sneak", "take");
-                System.out.printf("%-15.15s  %-15.15s%n", "inventory", "throw");
-                System.out.printf("%-15.15s  %-15.15s%n", "attack", "help");
-                System.out.printf("quit\n");
-
-                return 1;
-            default:
-                System.out.println("Action unrecognized. Type 'help' for list of available actions.");
-                return 1;
-        }
-        return 0;
+        Parser parser = new Parser(command);
+        return (parser.run() == 0) ? 0 : 1;
     }
 }

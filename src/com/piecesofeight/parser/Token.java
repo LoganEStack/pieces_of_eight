@@ -10,6 +10,6 @@ public class Token {
         type = t; val = v;
     }
 
-    TokenType getTokenType() {return type;}
-    String getTokenValue() {return val;}
+    public TokenType getTokenType() {return type;}
+    public String toString() {return val;}
 }

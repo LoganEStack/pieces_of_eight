@@ -1,6 +1,6 @@
 package com.piecesofeight.enemies;
 
-abstract class Enemy {
+public class Enemy {
     private String name;
     private String description;
     private String weapon;
